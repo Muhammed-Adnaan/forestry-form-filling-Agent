@@ -55,8 +55,8 @@ export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
             'absolute inset-0 z-10 rounded-full transition-colors',
             !popupOpen && 'bg-fgAccent',
             !error &&
-              isAgentConnecting &&
-              'bg-fgAccent/30 animate-spin [background-image:conic-gradient(from_0deg,transparent_0%,transparent_30%,var(--color-fgAccent)_50%,transparent_70%,transparent_100%)]',
+            isAgentConnecting &&
+            'bg-fgAccent/30 animate-spin [background-image:conic-gradient(from_0deg,transparent_0%,transparent_30%,var(--color-fgAccent)_50%,transparent_70%,transparent_100%)]',
             (isAgentConnected || (error && popupOpen)) && 'bg-destructive-foreground'
           )}
         />
@@ -82,7 +82,7 @@ export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
                   className="bg-bg1 size-5"
                   // webpack build throws if I use custom tailwind classes to achive this
                   style={{
-                    maskImage: 'url(/lk-logo.svg)',
+                    maskImage: 'url(/kar-gov-logo.png)',
                     maskSize: 'contain',
                   }}
                 />

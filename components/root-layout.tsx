@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils';
 import '@/styles/globals.css';
 
 export const metadata = {
-  title: 'LiveKit Embeded Voice Agent',
-  description: 'LiveKit Embeded Voice Agent',
+  title: 'KARNATAKA GOVT',
+  description: 'KARNATAKA GOVT',
 };
 
 const publicSans = Public_Sans({
@@ -48,6 +48,7 @@ export async function RootLayout({ children, className }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning className={cn('scroll-smooth', className)}>
       <body
+        suppressHydrationWarning
         className={cn(publicSans.variable, commitMono.variable, 'overflow-x-hidden antialiased')}
       >
         {children}

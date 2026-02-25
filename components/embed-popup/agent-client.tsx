@@ -8,6 +8,7 @@ import { ErrorMessage } from '@/components/embed-popup/error-message';
 import { PopupView } from '@/components/embed-popup/popup-view';
 import { Trigger } from '@/components/embed-popup/trigger';
 import useConnectionDetails from '@/hooks/use-connection-details';
+import { useFormRpc } from '@/hooks/use-form-rpc';
 import { type AppConfig, EmbedErrorDetails } from '@/lib/types';
 
 const PopupViewMotion = motion.create(PopupView);
@@ -15,6 +16,16 @@ const PopupViewMotion = motion.create(PopupView);
 export type EmbedFixedAgentClientProps = {
   appConfig: AppConfig;
 };
+
+/**
+ * Rendered inside <RoomContext.Provider> so useFormRpc can access the correct
+ * room via useRoomContext(). Registers getFormDetails / fillFormDetails RPC
+ * methods that the LiveKit agent calls to read and write the form.
+ */
+function FormRpcBridge() {
+  useFormRpc();
+  return null;
+}
 
 function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
   const isAnimating = useRef(false);
@@ -109,6 +120,9 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
 
   return (
     <RoomContext.Provider value={room}>
+      {/* FormRpcBridge sits inside the provider so it uses the correct room */}
+      <FormRpcBridge />
+
       <RoomAudioRenderer />
       <StartAudio label="Start Audio" />
 

@@ -16,9 +16,9 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
     >
       <div className="pl-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lk-logo.svg" alt="LiveKit Logo" className="block size-6 dark:hidden" />
+        <img src="/kar-gov-logo.png" alt="LiveKit Logo" className="block size-6 dark:hidden" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lk-logo-dark.svg" alt="LiveKit Logo" className="hidden size-6 dark:block" />
+        <img src="/kar-gov-logo.png" alt="LiveKit Logo" className="hidden size-6 dark:block" />
       </div>
 
       <div className="flex w-full flex-col justify-center gap-4 overflow-auto px-8 text-center">

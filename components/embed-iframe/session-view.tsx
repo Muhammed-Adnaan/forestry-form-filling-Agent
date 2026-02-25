@@ -8,6 +8,7 @@ import {
   BarVisualizer,
   useRoomContext,
   useVoiceAssistant,
+  useLocalParticipant,
 } from '@livekit/components-react';
 import { PhoneDisconnectIcon } from '@phosphor-icons/react/dist/ssr';
 import { DeviceSelect } from '@/components/livekit/device-select';
@@ -39,6 +40,15 @@ export const SessionView = ({
 }: React.ComponentProps<'div'> & SessionViewProps) => {
   const room = useRoomContext();
   const { state: agentState, audioTrack: agentAudioTrack } = useVoiceAssistant();
+  const { localParticipant: { isSpeaking: localIsSpeaking } } = useLocalParticipant();
+
+  useEffect(() => {
+    if (localIsSpeaking) {
+      console.log('🗣️ User is speaking...');
+    } else {
+      console.log('🗣️ User stopped speaking...');
+    }
+  }, [localIsSpeaking]);
   const {
     micTrackRef,
     // FIXME: how do I explicitly ensure only the microphone channel is used?

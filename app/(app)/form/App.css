@@ -1,0 +1,61 @@
+/* Replicating key styles from original form.html */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
+
+.StepTitle {
+  color: #E18728;
+  font-size: 18px;
+  margin: 0;
+  padding: 5px 0;
+}
+
+.drop-down-style {
+  padding: 3px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  padding: 5px;
+  vertical-align: top;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  padding: 4px;
+  color: #333 ;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+.btn-success {
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+  color: white;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-success:hover {
+  background-color: #449d44;
+  border-color: #398439;
+}
+
+label {
+  font-size: 14px;
+  color: #242424;
+}

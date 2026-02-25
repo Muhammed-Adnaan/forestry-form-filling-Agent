@@ -72,7 +72,31 @@ pnpm dev
 
 Open http://localhost:3000 in your browser to experience the 2 embeddable demos.
 
-You'll also need an agent to speak with. Try our starter agent for [Python](https://github.com/livekit-examples/agent-starter-python), [Node.js](https://github.com/livekit-examples/agent-starter-node), or [create your own from scratch](https://docs.livekit.io/agents/start/voice-ai/).
+Open http://localhost:3000 in your browser to experience the 2 embeddable demos.
+
+### Running the Agent
+
+This starter includes both Python (`agent.py`) and Node.js (`agent.ts`) agents. **You must run one of them** in a separate terminal for the voice interactions to work.
+
+**To run the Python Agent (`agent.py`):**
+```bash
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# macOS/Linux
+source venv/bin/activate
+pip install -r requirements.txt
+python agent.py dev
+```
+
+**To run the Node.js Agent (`agent.ts`):**
+```bash
+npm install # or pnpm install
+npx tsx agent.ts dev
+```
+
+> [!NOTE]
+> The agents share the same `.env.local` credentials as your Next.js frontend. They will automatically connect to your LiveKit Cloud Sandbox project and start listening for inbound user connections.
 
 > [!NOTE]
 > If you need to modify the LiveKit project credentials used, you can edit `.env.local` (copy from `.env.example` if you don't have one) to suit your needs.

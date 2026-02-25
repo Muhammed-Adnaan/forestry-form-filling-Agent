@@ -65,7 +65,16 @@ export const PopupView = ({
     audioTrack: agentAudioTrack,
     videoTrack: agentVideoTrack,
   } = useVoiceAssistant();
-  const { isCameraEnabled, isScreenShareEnabled } = useLocalParticipant();
+  const { localParticipant: { isSpeaking: localIsSpeaking }, isCameraEnabled, isScreenShareEnabled } = useLocalParticipant();
+
+  useEffect(() => {
+    if (localIsSpeaking) {
+      console.log('🗣️ User is speaking (Popup)...');
+    } else {
+      console.log('🗣️ User stopped speaking (Popup)...');
+    }
+  }, [localIsSpeaking]);
+
   const [screenShareTrack] = useTracks([Track.Source.ScreenShare]);
   const cameraTrack: TrackReference | undefined = useLocalTrackRef(Track.Source.Camera);
   const [chatOpen, setChatOpen] = useState(false);
