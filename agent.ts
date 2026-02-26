@@ -20,7 +20,11 @@ import {
 } from '@livekit/agents';
 import * as deepgram from '@livekit/agents-plugin-deepgram';
 import * as openai from '@livekit/agents-plugin-openai';
+import * as google from '@livekit/agents-plugin-google';
 import * as silero from '@livekit/agents-plugin-silero';
+import * as livekit from '@livekit/agents-plugin-livekit';
+// import * as LivekitNC from '@livekit/noise-cancellation-node';
+import { BackgroundVoiceCancellation } from '@livekit/noise-cancellation-node';
 
 // ─── 1. TOOL DEFINITIONS (Standard) ───────────────────────────────────────────
 
@@ -52,9 +56,9 @@ function makeFormTools(ctx: JobContext) {
     });
 
     const fillFormFields = llm.tool({
-        description: 'Updates form fields.',
+        description: 'Updates form fields. IMPORTANT: You MUST pass the updates nested inside the "fields" property. Example: { "fields": { "hobli": "kasaba" } }',
         parameters: z.object({
-            fields: z.record(z.string(), z.string()).describe('Key-value pairs to update.'),
+            fields: z.record(z.string(), z.string()).describe('Key-value pairs to update (e.g., {"hobli": "kasaba"}).'),
         }),
         execute: async ({ fields }) => {
             console.log('✍️ Updating form:', fields);
@@ -83,35 +87,64 @@ class FormAssistant extends voice.Agent {
         super({
             // INSTRUCTIONS
             instructions: `You are a helpful voice assistant.
-1. First, check the form state using 'get_form_details'.
-2. Greet the user and ask for missing details.
-3. Use 'fill_form_fields' to update the form.
-4. keep it short and conversational
-5. just ask one - two  question at a time`,
+                1. First, check the form state using 'get_form_details'.
+                2. Greet the user and ask for missing details.
+                3. Use 'fill_form_fields' to update the form.
+                4. keep it short and conversational
+                5. just ask one - two  question at a time`,
 
             // TOOLS
             tools: makeFormTools(ctx),
 
             // PIPELINE COMPONENTS
             // 1. STT (Hearing): Deepgram STTv2 (matching agent.py flux-general-en)
-            turnDetection: "stt",
-            stt: new deepgram.STTv2({
-                model: "flux-general-en",
-                eagerEotThreshold: 0.4,
+            // turnDetection: "stt",
+            // turnDetection: new livekit.turnDetector.MultilingualModel(),
+            // llm: new google.beta.realtime.RealtimeModel({
+            //     model: "gemini-2.5-flash-native-audio-preview-12-2025",
+            //     realtimeInputConfig: {
+            //         automaticActivityDetection: {
+            //             disabled: true,
+            //         },
+            //     },
+            // }),
+            llm: new openai.realtime.RealtimeModel({
+                // model: "gpt-4o-realtime-preview-2024-10-01",
+                model: "gpt-realtime-mini",
+                voice: "ash",
+                turnDetection: {
+                    type: 'server_vad',
+                    threshold: 0.4,
+                    prefix_padding_ms: 350,
+                    silence_duration_ms: 500,
+                    create_response: true,
+                    interrupt_response: true,
+                },
             }),
+            tts: new openai.TTS({
+                model: "gpt-4o-mini-tts",
+                voice: "ash",
+                instructions: "speak in the language user is speaking in.",
+            }
+            ),
+            // stt: "deepgram/nova-3",
+            // turnDetection: new livekit.turnDetector.MultilingualModel(),
+            // stt: new deepgram.STT({
+            //     model: "nova-2-general",
+            // }),
 
-            // 2. LLM (Thinking): OpenAI Plugin routing to Ollama
-            llm: new openai.LLM({
-                baseURL: 'http://localhost:11434/v1',
-                apiKey: 'ollama', // Required but dummy key
-                model: 'gpt-oss:120b-cloud',
-                temperature: 0.7,
-            }),
+            // // 2. LLM (Thinking): OpenAI Plugin routing to Ollama
+            // llm: new openai.LLM({
+            //     baseURL: 'http://localhost:11434/v1',
+            //     apiKey: 'ollama', // Required but dummy key
+            //     model: 'gpt-oss:120b-cloud',
+            //     temperature: 0.7,
+            // }),
 
-            // 3. TTS (Speaking): Deepgram TTS (matching agent.py aura-2-asteria-en)
-            tts: new deepgram.TTS({
-                model: 'aura-2-asteria-en', // The asteria voice model from agent.py
-            }),
+            // // 3. TTS (Speaking): Deepgram TTS (matching agent.py aura-2-asteria-en)
+            // tts: new deepgram.TTS({
+            //     model: 'aura-2-asteria-en', // The asteria voice model from agent.py
+            // }),
         });
     }
 }
@@ -125,9 +158,8 @@ export default defineAgent({
 
         // Matching Silero VAD from agent.py
         const vad = await silero.VAD.load({
-            minSpeechDuration: 0.1,
-            minSilenceDuration: 1.0,
-
+            minSpeechDuration: 0.3,
+            minSilenceDuration: 0.7,
         });
 
         // Initialize AgentLogic
@@ -144,7 +176,17 @@ export default defineAgent({
             }
         });
 
-        await session.start({ room: ctx.room, agent: agent });
+        await session.start({
+            room: ctx.room, agent: agent, inputOptions: {
+                noiseCancellation: BackgroundVoiceCancellation(),
+            },
+        });
+        // await session.say(
+        //     'Hello. How can I help you today?',
+        //     {
+        //         allowInterruptions: false,
+        //     }
+        // );
 
         // Optional: Initial greeting matching agent.py
         // await agent.tts.say("Hello! I can help you fill out this form.");

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Room, RoomEvent } from 'livekit-client';
+import { LocalAudioTrack, Room, RoomEvent, Track } from 'livekit-client';
 import { motion } from 'motion/react';
 import { RoomAudioRenderer, RoomContext, StartAudio } from '@livekit/components-react';
 import { XIcon } from '@phosphor-icons/react';
@@ -20,6 +20,31 @@ interface AppProps {
 
 function EmbedAgentClient({ appConfig }: AppProps) {
   const room = useMemo(() => new Room(), []);
+
+  useEffect(() => {
+    const onLocalTrackPublished = async (trackPublication: any) => {
+      if (
+        trackPublication.source === Track.Source.Microphone &&
+        trackPublication.track instanceof LocalAudioTrack
+      ) {
+        const { KrispNoiseFilter, isKrispNoiseFilterSupported } = await import(
+          '@livekit/krisp-noise-filter'
+        );
+        if (!isKrispNoiseFilterSupported()) {
+          console.warn('Krisp noise filter is currently not supported on this browser');
+          return;
+        }
+        const krispProcessor = KrispNoiseFilter();
+        console.log('Enabling LiveKit Krisp noise filter');
+        await trackPublication.track.setProcessor(krispProcessor);
+        await krispProcessor.setEnabled(true);
+      }
+    };
+    room.on(RoomEvent.LocalTrackPublished, onLocalTrackPublished);
+    return () => {
+      room.off(RoomEvent.LocalTrackPublished, onLocalTrackPublished);
+    };
+  }, [room]);
   const [sessionStarted, setSessionStarted] = useState(false);
   const { connectionDetails, refreshConnectionDetails } = useConnectionDetails(appConfig);
 
