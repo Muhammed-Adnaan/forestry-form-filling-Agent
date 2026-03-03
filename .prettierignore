@@ -4,6 +4,12 @@ node_modules/
 pnpm-lock.yaml
 .next/
 .env*
+# Ignore generated prisma files
+lib/generated/prisma
 
+# Ignore build outputs
+.next
+node_modules
+dist
 
 

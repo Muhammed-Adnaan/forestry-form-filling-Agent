@@ -25,6 +25,8 @@
     "@livekit/protocol": "^1.41.0",
     "@livekit/rtc-node": "^0.13.24",
     "@phosphor-icons/react": "^2.1.8",
+    "@prisma/adapter-better-sqlite3": "^7.4.2",
+    "@prisma/client": "^7.4.2",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-popover": "^1.1.14",
     "@radix-ui/react-scroll-area": "^1.2.9",
@@ -32,6 +34,8 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toggle": "^1.1.9",
     "@radix-ui/react-toolbar": "^1.1.10",
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^12.6.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
@@ -64,6 +68,7 @@
     "postcss-loader": "^8.1.1",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "prisma": "^7.4.2",
     "style-loader": "^4.0.0",
     "tailwindcss": "^4",
     "ts-loader": "^9.5.2",
@@ -73,5 +78,11 @@
     "webpack": "^5.100.1",
     "webpack-cli": "^6.0.1"
   },
-  "packageManager": "pnpm@10.30.1"
+  "packageManager": "pnpm@10.30.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "@livekit/noise-cancellation-node"
+    ]
+  }
 }

@@ -15,6 +15,7 @@ const PopupViewMotion = motion.create(PopupView);
 
 export type EmbedFixedAgentClientProps = {
   appConfig: AppConfig;
+  onPopupStateChange?: (isOpen: boolean) => void;
 };
 
 /**
@@ -27,11 +28,12 @@ function FormRpcBridge() {
   return null;
 }
 
-function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
+function AgentClient({ appConfig, onPopupStateChange }: EmbedFixedAgentClientProps) {
   const isAnimating = useRef(false);
   const room = useMemo(() => new Room(), []);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onLocalTrackPublished = async (trackPublication: any) => {
       if (
         trackPublication.source === Track.Source.Microphone &&
@@ -57,6 +59,12 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
   }, [room]);
   const [popupOpen, setPopupOpen] = useState(false);
   const [error, setError] = useState<EmbedErrorDetails | null>(null);
+
+  useEffect(() => {
+    if (onPopupStateChange) {
+      onPopupStateChange(popupOpen);
+    }
+  }, [popupOpen, onPopupStateChange]);
   const { connectionDetails, refreshConnectionDetails, existingOrRefreshConnectionDetails } =
     useConnectionDetails(appConfig);
 
@@ -172,8 +180,40 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
         onAnimationComplete={handlePanelAnimationComplete}
         className="fixed right-4 bottom-20 left-4 z-50 md:left-auto"
       >
-        <div className="bg-bg1 dark:bg-bg2 border-separator1 dark:border-separator2 ml-auto h-[480px] w-full rounded-[28px] border border-solid drop-shadow-md md:w-[360px]">
-          <div className="relative h-full w-full">
+        <div className="bg-bg1 dark:bg-bg2 border-separator1 dark:border-separator2 ml-auto flex h-[520px] w-full flex-col overflow-hidden rounded-[28px] border border-solid drop-shadow-md md:w-[360px]">
+          {/* Karnataka Govt Header */}
+          <div
+            style={{
+              background: '#3d3d3d',
+              borderBottom: '4px solid #E18728',
+              borderRadius: '28px 28px 0 0',
+            }}
+            className="flex shrink-0 items-center gap-3 px-4 py-2"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/kar-gov-logo.png"
+              alt="Karnataka Emblem"
+              className="h-9 w-9 object-contain"
+            />
+            <div className="flex flex-col leading-tight">
+              <span
+                style={{
+                  color: '#E18728',
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  fontFamily: 'Arial, sans-serif',
+                }}
+              >
+                ಇ-ಕಟಾವಣೆ ಮತ್ತು ಸಾಗಾಣಿಕೆ
+              </span>
+              <span style={{ color: '#fff', fontSize: '11px', fontFamily: 'Arial, sans-serif' }}>
+                e-Felling &amp; Transit Assistant
+              </span>
+            </div>
+          </div>
+          {/* Popup Content */}
+          <div className="relative min-h-0 flex-1">
             <ErrorMessage error={error} />
             {!error && (
               <PopupViewMotion

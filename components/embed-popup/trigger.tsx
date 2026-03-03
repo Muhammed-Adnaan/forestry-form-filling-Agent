@@ -44,7 +44,7 @@ export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
         }}
         onClick={onToggle}
         className={cn(
-          'relative m-0 block size-12 p-0.5 drop-shadow-md',
+          'relative m-0 block size-14 p-0.5 drop-shadow-md',
           'scale-100 transition-[scale] duration-300 hover:scale-105 focus:scale-105',
           'fixed right-4 bottom-4 z-50'
         )}
@@ -53,18 +53,18 @@ export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
         <motion.div
           className={cn(
             'absolute inset-0 z-10 rounded-full transition-colors',
-            !popupOpen && 'bg-fgAccent',
+            !popupOpen && '[background-color:#2e7d32]',
             !error &&
-            isAgentConnecting &&
-            'bg-fgAccent/30 animate-spin [background-image:conic-gradient(from_0deg,transparent_0%,transparent_30%,var(--color-fgAccent)_50%,transparent_70%,transparent_100%)]',
+              isAgentConnecting &&
+              'animate-spin [background-color:rgba(46,125,50,0.3)] [background-image:conic-gradient(from_0deg,transparent_0%,transparent_30%,#2e7d32_50%,transparent_70%,transparent_100%)]',
             (isAgentConnected || (error && popupOpen)) && 'bg-destructive-foreground'
           )}
         />
         {/* icon */}
         <div
           className={cn(
-            'relative z-20 grid size-11 place-items-center rounded-full transition-colors',
-            !popupOpen && 'bg-fgAccent',
+            'relative z-20 grid size-13 place-items-center rounded-full transition-colors',
+            !popupOpen && '[background-color:#2e7d32]',
             !error && isAgentConnecting && 'bg-bg1',
             (isAgentConnected || (error && popupOpen)) && 'bg-destructive'
           )}
@@ -78,14 +78,8 @@ export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
                 exit={{ opacity: 0, y: popupOpen ? 20 : -20 }}
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
               >
-                <div
-                  className="bg-bg1 size-5"
-                  // webpack build throws if I use custom tailwind classes to achive this
-                  style={{
-                    maskImage: 'url(/kar-gov-logo.png)',
-                    maskSize: 'contain',
-                  }}
-                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/kar-gov-logo.png" alt="Karnataka Emblem" />
               </motion.div>
             )}
             {(isAgentConnecting || (error && popupOpen)) && (

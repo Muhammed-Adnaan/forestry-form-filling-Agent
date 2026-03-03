@@ -79,6 +79,7 @@ Open http://localhost:3000 in your browser to experience the 2 embeddable demos.
 This starter includes both Python (`agent.py`) and Node.js (`agent.ts`) agents. **You must run one of them** in a separate terminal for the voice interactions to work.
 
 **To run the Python Agent (`agent.py`):**
+
 ```bash
 python -m venv venv
 # Windows
@@ -90,6 +91,7 @@ python agent.py dev
 ```
 
 **To run the Node.js Agent (`agent.ts`):**
+
 ```bash
 npm install # or pnpm install
 npx tsx agent.ts dev

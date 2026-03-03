@@ -40,11 +40,12 @@ class FormAssistant(Agent):
         super().__init__(
             instructions=(
                 "You are a helpful voice assistant. "
-                "1. First, check the form state using 'get_form_details'. "
-                "2. Greet the user and ask for missing details. "
-                "3. Use 'fill_form_fields' to update the form."
-                "4. keep it short and conversational"
-                "5. just ask one - two  question at a time"
+                "1. First, check the form state using 'get_form_details'. It includes a 'language' field ('english' or 'kannada'). "
+                "2. ALWAYS speak and respond to the user in the language specified by the 'language' field. If it is 'kannada', speak in Kannada. If 'english', speak in English. "
+                "3. If the user asks you to switch to Kannada or English, use 'fill_form_fields' to update it, e.g., {'language': 'kannada'}. "
+                "4. Greet the user and ask for missing details. "
+                "5. Use 'fill_form_fields' to update the form fields as they are provided. "
+                "6. Keep it short and conversational. Just ask one or two questions at a time."
             )
         )
 
@@ -151,7 +152,11 @@ async def entrypoint(ctx: JobContext):
         llm=google.realtime.RealtimeModel(
             voice="Puck",
             temperature=0.8,
-            instructions="You are a helpful assistant",
+            instructions=(
+                "You are a helpful voice assistant. Check form state via 'get_form_details'. "
+                "Speak in the language specified in the state (english or kannada). "
+                "Use 'fill_form_fields' to change language or update form fields based on user request."
+            ),
             input_audio_transcription=None,
         ),
     )
@@ -189,4 +194,4 @@ async def entrypoint(ctx: JobContext):
 
 
 if __name__ == "__main__":
-    cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint))
+    cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint, agent_name="form-assistant"))

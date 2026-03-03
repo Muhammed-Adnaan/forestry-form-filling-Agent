@@ -44,3 +44,5 @@ next-env.d.ts
 
 # embed fixed build output
 public/embed-popup.*
+
+/lib/generated/prisma

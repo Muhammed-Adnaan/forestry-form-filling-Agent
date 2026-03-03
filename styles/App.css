@@ -1,0 +1,67 @@
+/* Global styles for Karnataka e-Felling form page */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Page wrapper ── */
+.App {
+  min-height: 100vh;
+  background-color: #f4f4f4;
+}
+
+/* ── Form container ── */
+.container {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Diagonal stripe background for the form area */
+.form {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    rgba(0, 0, 0, 0.04) 4px,
+    rgba(0, 0, 0, 0.04) 8px
+  );
+  border-bottom: 1px solid #ddd;
+}
+
+/* Global table reset */
+table {
+  border-collapse: collapse;
+}
+
+td {
+  padding: 5px;
+  vertical-align: top;
+}
+
+/* Global form input baseline (Tailwind classes in components will override per-element) */
+input[type='text'],
+input[type='number'],
+input[type='email'],
+input[type='file'],
+select,
+textarea {
+  padding: 4px;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+input[type='file'] {
+  cursor: pointer;
+}
+
+label {
+  font-size: 13px;
+  color: #242424;
+}

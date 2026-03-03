@@ -30,13 +30,14 @@ export async function POST(req: Request) {
     }
 
     // Parse agent configuration from request body
-    let body: any = {};
+    let body: Record<string, unknown> = {};
     try {
       body = await req.json();
-    } catch (e) {
+    } catch {
       // Ignore empty body errors
     }
-    const agentName: string = body?.room_config?.agents?.[0]?.agent_name;
+    const agentName = (body?.room_config as { agents?: { agent_name?: string }[] })?.agents?.[0]
+      ?.agent_name;
 
     // Generate participant token
     const participantName = 'user';

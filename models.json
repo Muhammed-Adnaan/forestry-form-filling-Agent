@@ -81,11 +81,7 @@
       "description": "Gemini 2.0 Flash (Image Generation) Experimental",
       "inputTokenLimit": 1048576,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens",
-        "bidiGenerateContent"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens", "bidiGenerateContent"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 40,
@@ -134,10 +130,7 @@
       "description": "Gemini 2.5 Flash Preview TTS",
       "inputTokenLimit": 8192,
       "outputTokenLimit": 16384,
-      "supportedGenerationMethods": [
-        "countTokens",
-        "generateContent"
-      ],
+      "supportedGenerationMethods": ["countTokens", "generateContent"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -150,11 +143,7 @@
       "description": "Gemini 2.5 Pro Preview TTS",
       "inputTokenLimit": 8192,
       "outputTokenLimit": 16384,
-      "supportedGenerationMethods": [
-        "countTokens",
-        "generateContent",
-        "batchGenerateContent"
-      ],
+      "supportedGenerationMethods": ["countTokens", "generateContent", "batchGenerateContent"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -166,10 +155,7 @@
       "displayName": "Gemma 3 1B",
       "inputTokenLimit": 32768,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64
@@ -180,10 +166,7 @@
       "displayName": "Gemma 3 4B",
       "inputTokenLimit": 32768,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64
@@ -194,10 +177,7 @@
       "displayName": "Gemma 3 12B",
       "inputTokenLimit": 32768,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64
@@ -208,10 +188,7 @@
       "displayName": "Gemma 3 27B",
       "inputTokenLimit": 131072,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64
@@ -222,10 +199,7 @@
       "displayName": "Gemma 3n E4B",
       "inputTokenLimit": 8192,
       "outputTokenLimit": 2048,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64
@@ -236,10 +210,7 @@
       "displayName": "Gemma 3n E2B",
       "inputTokenLimit": 8192,
       "outputTokenLimit": 2048,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64
@@ -327,11 +298,7 @@
       "description": "Gemini 2.5 Flash Preview Image",
       "inputTokenLimit": 32768,
       "outputTokenLimit": 32768,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens",
-        "batchGenerateContent"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens", "batchGenerateContent"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -439,11 +406,7 @@
       "description": "Gemini 3 Pro Image Preview",
       "inputTokenLimit": 131072,
       "outputTokenLimit": 32768,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens",
-        "batchGenerateContent"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens", "batchGenerateContent"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -457,11 +420,7 @@
       "description": "Gemini 3 Pro Image Preview",
       "inputTokenLimit": 131072,
       "outputTokenLimit": 32768,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens",
-        "batchGenerateContent"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens", "batchGenerateContent"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -475,10 +434,7 @@
       "description": "Gemini Robotics-ER 1.5 Preview",
       "inputTokenLimit": 1048576,
       "outputTokenLimit": 65536,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -492,10 +448,7 @@
       "description": "Gemini 2.5 Computer Use Preview 10-2025",
       "inputTokenLimit": 131072,
       "outputTokenLimit": 65536,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -509,10 +462,7 @@
       "description": "Preview release (December 12th, 2025) of Deep Research Pro",
       "inputTokenLimit": 131072,
       "outputTokenLimit": 65536,
-      "supportedGenerationMethods": [
-        "generateContent",
-        "countTokens"
-      ],
+      "supportedGenerationMethods": ["generateContent", "countTokens"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -540,9 +490,7 @@
       "description": "Model trained to return answers to questions that are grounded in provided sources, along with estimating answerable probability.",
       "inputTokenLimit": 7168,
       "outputTokenLimit": 1024,
-      "supportedGenerationMethods": [
-        "generateAnswer"
-      ],
+      "supportedGenerationMethods": ["generateAnswer"],
       "temperature": 0.2,
       "topP": 1,
       "topK": 40
@@ -554,9 +502,7 @@
       "description": "Vertex served Imagen 4.0 model",
       "inputTokenLimit": 480,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "predict"
-      ]
+      "supportedGenerationMethods": ["predict"]
     },
     {
       "name": "models/imagen-4.0-ultra-generate-001",
@@ -565,9 +511,7 @@
       "description": "Vertex served Imagen 4.0 ultra model",
       "inputTokenLimit": 480,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "predict"
-      ]
+      "supportedGenerationMethods": ["predict"]
     },
     {
       "name": "models/imagen-4.0-fast-generate-001",
@@ -576,9 +520,7 @@
       "description": "Vertex served Imagen 4.0 Fast model",
       "inputTokenLimit": 480,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "predict"
-      ]
+      "supportedGenerationMethods": ["predict"]
     },
     {
       "name": "models/veo-2.0-generate-001",
@@ -587,9 +529,7 @@
       "description": "Vertex served Veo 2 model. Access to this model requires billing to be enabled on the associated Google Cloud Platform account. Please visit https://console.cloud.google.com/billing to enable it.",
       "inputTokenLimit": 480,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "predictLongRunning"
-      ]
+      "supportedGenerationMethods": ["predictLongRunning"]
     },
     {
       "name": "models/veo-3.0-generate-001",
@@ -598,9 +538,7 @@
       "description": "Veo 3",
       "inputTokenLimit": 480,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "predictLongRunning"
-      ]
+      "supportedGenerationMethods": ["predictLongRunning"]
     },
     {
       "name": "models/veo-3.0-fast-generate-001",
@@ -609,9 +547,7 @@
       "description": "Veo 3 fast",
       "inputTokenLimit": 480,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "predictLongRunning"
-      ]
+      "supportedGenerationMethods": ["predictLongRunning"]
     },
     {
       "name": "models/veo-3.1-generate-preview",
@@ -620,9 +556,7 @@
       "description": "Veo 3.1",
       "inputTokenLimit": 480,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "predictLongRunning"
-      ]
+      "supportedGenerationMethods": ["predictLongRunning"]
     },
     {
       "name": "models/veo-3.1-fast-generate-preview",
@@ -631,9 +565,7 @@
       "description": "Veo 3.1 fast",
       "inputTokenLimit": 480,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "predictLongRunning"
-      ]
+      "supportedGenerationMethods": ["predictLongRunning"]
     },
     {
       "name": "models/gemini-2.5-flash-native-audio-latest",
@@ -642,10 +574,7 @@
       "description": "Latest release of Gemini 2.5 Flash Native Audio",
       "inputTokenLimit": 131072,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "countTokens",
-        "bidiGenerateContent"
-      ],
+      "supportedGenerationMethods": ["countTokens", "bidiGenerateContent"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -659,10 +588,7 @@
       "description": "Gemini 2.5 Flash Native Audio Preview 09-2025",
       "inputTokenLimit": 131072,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "countTokens",
-        "bidiGenerateContent"
-      ],
+      "supportedGenerationMethods": ["countTokens", "bidiGenerateContent"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,
@@ -676,10 +602,7 @@
       "description": "Gemini 2.5 Flash Native Audio Preview 12-2025",
       "inputTokenLimit": 131072,
       "outputTokenLimit": 8192,
-      "supportedGenerationMethods": [
-        "countTokens",
-        "bidiGenerateContent"
-      ],
+      "supportedGenerationMethods": ["countTokens", "bidiGenerateContent"],
       "temperature": 1,
       "topP": 0.95,
       "topK": 64,

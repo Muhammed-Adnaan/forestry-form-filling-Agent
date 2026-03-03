@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model district {
+  district_id   Int     @id @default(autoincrement())
+  district_name String?
+  state_id      Int?
+}
+
+model state {
+  state_id   Int     @id @default(autoincrement())
+  state_name String? @unique(map: "sqlite_autoindex_state_1")
+}
+
+model taluk {
+  taluk_id    Int     @id @default(autoincrement())
+  taluk_name  String?
+  district_id Int?
+}
+
+model village {
+  village_id   Int     @id @default(autoincrement())
+  village_name String?
+  taluk_id     Int?
+}

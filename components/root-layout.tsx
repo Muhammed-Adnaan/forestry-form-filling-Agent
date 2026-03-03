@@ -6,6 +6,11 @@ import '@/styles/globals.css';
 export const metadata = {
   title: 'KARNATAKA GOVT',
   description: 'KARNATAKA GOVT',
+  icons: {
+    icon: '/kar-gov-logo.png',
+    shortcut: '/kar-gov-logo.png',
+    apple: '/kar-gov-logo.png',
+  },
 };
 
 const publicSans = Public_Sans({

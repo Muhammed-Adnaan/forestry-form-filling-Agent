@@ -27,3 +27,5 @@ export const WelcomeView = ({
     </div>
   );
 };
+
+export default WelcomeView;

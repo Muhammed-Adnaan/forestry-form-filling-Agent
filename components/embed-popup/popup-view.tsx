@@ -65,7 +65,11 @@ export const PopupView = ({
     audioTrack: agentAudioTrack,
     videoTrack: agentVideoTrack,
   } = useVoiceAssistant();
-  const { localParticipant: { isSpeaking: localIsSpeaking }, isCameraEnabled, isScreenShareEnabled } = useLocalParticipant();
+  const {
+    localParticipant: { isSpeaking: localIsSpeaking },
+    isCameraEnabled,
+    isScreenShareEnabled,
+  } = useLocalParticipant();
 
   useEffect(() => {
     if (localIsSpeaking) {

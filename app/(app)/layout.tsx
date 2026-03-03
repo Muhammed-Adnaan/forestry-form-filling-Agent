@@ -5,9 +5,5 @@ interface RootLayoutProps {
 }
 
 export default async function Layout({ children }: RootLayoutProps) {
-  return (
-    <RootLayout className="bg-background">
-      {children}
-    </RootLayout>
-  );
+  return <RootLayout className="bg-background">{children}</RootLayout>;
 }
