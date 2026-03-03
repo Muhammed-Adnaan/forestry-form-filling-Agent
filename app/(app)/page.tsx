@@ -19,7 +19,7 @@ import '@/styles/App.css';
 
 function App() {
   const [isAgentOpen, setIsAgentOpen] = useState(false);
-  const [language, setLanguage] = useState('english');
+  const [language, setLanguage] = useState('English');
   const [formData, setFormData] = useState({
     areaType: '0',
     district: '0',

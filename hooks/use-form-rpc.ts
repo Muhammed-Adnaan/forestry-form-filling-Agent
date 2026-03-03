@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { type RpcInvocationData } from 'livekit-client';
 import { useRoomContext } from '@livekit/components-react';
-import { fillFormDetails, getFormDetails } from '@/lib/tool';
+import { fillFormDetails, getFormDetails, getLanguage, setLanguage } from '@/lib/tool';
 
 /**
  * Registers two LiveKit RPC methods while the session is active.
@@ -48,12 +48,40 @@ export function useFormRpc() {
       }
     };
 
+    // ── Handler: getLanguage ──────────────────────────────────────────
+    const handleGetLanguage = async (_data: RpcInvocationData): Promise<string> => {
+      try {
+        const lang = getLanguage();
+        return JSON.stringify({ language: lang });
+      } catch (err) {
+        console.error('[useFormRpc] getLanguage error:', err);
+        return JSON.stringify({ error: String(err) });
+      }
+    };
+
+    // ── Handler: setLanguage ──────────────────────────────────────────
+    const handleSetLanguage = async (data: RpcInvocationData): Promise<string> => {
+      try {
+        const { language } = JSON.parse(data.payload || '{}');
+        if (!language) return JSON.stringify({ error: 'Missing "language" field in payload.' });
+        setLanguage(language);
+        return JSON.stringify({ success: true });
+      } catch (err) {
+        console.error('[useFormRpc] setLanguage error:', err);
+        return JSON.stringify({ error: String(err) });
+      }
+    };
+
     room.localParticipant.registerRpcMethod('getFormDetails', handleGetFormDetails);
     room.localParticipant.registerRpcMethod('fillFormDetails', handleFillFormDetails);
+    room.localParticipant.registerRpcMethod('getLanguage', handleGetLanguage);
+    room.localParticipant.registerRpcMethod('setLanguage', handleSetLanguage);
 
     return () => {
       room.localParticipant.unregisterRpcMethod('getFormDetails');
       room.localParticipant.unregisterRpcMethod('fillFormDetails');
+      room.localParticipant.unregisterRpcMethod('getLanguage');
+      room.localParticipant.unregisterRpcMethod('setLanguage');
     };
   }, [room]);
 }

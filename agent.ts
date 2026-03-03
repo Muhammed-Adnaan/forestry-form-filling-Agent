@@ -4,6 +4,7 @@
  * Run: pnpm dev:agent
  */
 import dotenv from 'dotenv';
+import { type RpcInvocationData } from 'livekit-client';
 import path from 'node:path';
 import url from 'node:url';
 import { z } from 'zod';
@@ -81,7 +82,56 @@ function makeFormTools(ctx: JobContext) {
     },
   });
 
-  return { get_form_details: getFormDetails, fill_form_fields: fillFormFields };
+  const getLanguageTool = llm.tool({
+    description:
+      'Fetches the currently selected UI language (e.g. "English", "Kannada"). Call this first before speaking so you know which language to use.',
+    parameters: z.object({}),
+    execute: async () => {
+      console.log('🌐 Fetching language via RPC...');
+      try {
+        const identity = getBrowserIdentity();
+        const response = await ctx.room.localParticipant?.performRpc({
+          destinationIdentity: identity,
+          method: 'getLanguage',
+          payload: '',
+          responseTimeout: 4000,
+        });
+        return `Language: ${response}`;
+      } catch (err) {
+        return `Error: ${String(err)}`;
+      }
+    },
+  });
+
+  const setLanguageTool = llm.tool({
+    description:
+      'Sets the UI language in the browser app. Pass the full language name, e.g. "English", "Kannada".',
+    parameters: z.object({
+      language: z.string().describe('Full language name, e.g. "English", "Kannada".'),
+    }),
+    execute: async ({ language }) => {
+      console.log(`🌐 Setting language to: ${language}`);
+      try {
+        const identity = getBrowserIdentity();
+        await ctx.room.localParticipant?.performRpc({
+          destinationIdentity: identity,
+          method: 'setLanguage',
+          payload: JSON.stringify({ language }),
+          responseTimeout: 4000,
+        });
+        return `Success: Language set to ${language}.`;
+      } catch (err) {
+        return `Error: ${String(err)}`;
+      }
+    },
+  });
+
+  return {
+    get_form_details: getFormDetails,
+    fill_form_fields: fillFormFields,
+    get_language: getLanguageTool,
+    set_language: setLanguageTool,
+  };
 }
 
 // ─── 2. AGENT CONFIGURATION (Standard Pipeline) ───────────────────────────────
@@ -90,12 +140,12 @@ class FormAssistant extends voice.Agent {
   constructor(ctx: JobContext) {
     super({
       // INSTRUCTIONS
-      instructions: `You are a helpful voice assistant.
-                1. First, check the form state using 'get_form_details' in this there is a component called "Declaration" in this we have language continue to responde in this language.
-                2. ask for missing details.
-                3. Use 'fill_form_fields' to update the form.
-                4. keep it short and conversational
-                5. just ask one - two  question at a time`,
+      instructions: `You are a helpful voice assistant that helps users fill out a government form.
+                1. ALWAYS call 'get_language' first. Respond ONLY in the language returned.
+                2. Use 'get_form_details' to read current field values before asking questions.
+                3. Ask only 1–2 missing fields at a time.
+                4. Use 'fill_form_fields' to save answers.
+                5. Keep replies short and conversational.`,
 
       // TOOLS
       tools: makeFormTools(ctx),
@@ -175,12 +225,46 @@ export default defineAgent({
       vad: vad,
     });
 
-    // this to see if we are getting the audio and is it getting registed to the agent
+    // this is to see if we are getting the audio and is it getting registed to the agent
     session.on(voice.AgentSessionEventTypes.UserInputTranscribed, (msg) => {
       if (msg.isFinal) {
         console.log('🗣️ User spoke');
       }
     });
+
+    // ── Handle Manual UI Language Changes ────────────────────────────────────
+    ctx.room.localParticipant?.registerRpcMethod(
+      'userLanguageChanged',
+      async (data: RpcInvocationData): Promise<string> => {
+        try {
+          const payload = JSON.parse(data.payload || '{}');
+          const newLang = payload.language || 'English';
+          console.log(`🌐 User manually switched UI language to: ${newLang}`);
+
+          const acknowledgements: Record<string, string> = {
+            English: 'I have switched my language to English.',
+            Kannada: 'ನಾನು ನನ್ನ ಭಾಷೆಯನ್ನು ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಿದ್ದೇನೆ.',
+            Hindi: 'मैंने अपनी भाषा हिंदी में बदल ली है।',
+            Tamil: 'நான் எனது மொழியை தமிழுக்கு மாற்றிவிட்டேன்.',
+            Telugu: 'నేను నా భాషను తెలుగుకి మార్చాను.',
+            Malayalam: 'ഞാൻ എന്റെ ഭാഷ മലയാളത്തിലേക്ക് മാറ്റി.',
+            Marathi: 'मी माझी भाषा मराठीत बदलली आहे.',
+            Gujarati: 'મેં મારી ભાષા ગુજરાતીમાં બદલી છે.',
+            Bengali: 'আমি আমার ভাষা বাংলায় পরিবর্তন করেছি।',
+            Punjabi: 'ਮੈਂ ਆਪਣੀ ਭਾਸ਼ਾ ਪੰਜਾਬੀ ਵਿੱਚ ਬਦਲ ਲਈ ਹੈ।',
+          };
+
+          const ack = acknowledgements[newLang] ?? acknowledgements['English'];
+
+          // Force an immediate utterance in the new language so the system recognizes the switch
+          await session.say(ack, { allowInterruptions: false });
+          return JSON.stringify({ success: true });
+        } catch (err) {
+          console.error('Error handling userLanguageChanged:', err);
+          return JSON.stringify({ error: String(err) });
+        }
+      }
+    );
 
     await session.start({
       room: ctx.room,
@@ -189,9 +273,49 @@ export default defineAgent({
         noiseCancellation: BackgroundVoiceCancellation(),
       },
     });
-    await session.say('Hello. How can I help you today?', {
-      allowInterruptions: false,
-    });
+
+    // ── Fetch language before the first utterance (Non-blocking) ─────────────
+    // We execute this asynchronously so it doesn't block the LiveKit agent initialization thread.
+    // Blocking the `entry` function for too long causes 'runner initialization timed out'.
+    setTimeout(async () => {
+      let detectedLanguage = 'English';
+      try {
+        const participants = Array.from(ctx.room.remoteParticipants.values());
+        if (participants.length > 0) {
+          const identity = participants[0].identity;
+          const langResponse = await ctx.room.localParticipant?.performRpc({
+            destinationIdentity: identity,
+            method: 'getLanguage',
+            payload: '',
+            responseTimeout: 4000,
+          });
+          const parsed = JSON.parse(langResponse ?? '{}');
+          if (parsed.language) {
+            detectedLanguage = parsed.language;
+            console.log(`🌐 Detected language: ${detectedLanguage}`);
+          }
+        }
+      } catch (err) {
+        console.warn('⚠️ Could not fetch language before greeting, defaulting to English.', err);
+      }
+
+      // Greet in the detected language
+      const greetings: Record<string, string> = {
+        English: 'Hello. How can I help you today?',
+        Kannada: 'ನಮಸ್ಕಾರ. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?',
+        Hindi: 'नमस्ते। मैं आपकी कैसे मदद कर सकता हूँ?',
+        Tamil: 'வணக்கம். நான் உங்களுக்கு எப்படி உதவலாம்?',
+        Telugu: 'నమస్కారం. నేను మీకు ఎలా సహాయపడగలను?',
+        Malayalam: 'നമസ്കാരം. ഞാൻ നിങ്ങളെ എങ്ങനെ സഹായിക്കണം?',
+        Marathi: 'नमस्कार. मी तुम्हाला कशी मदत करू शकतो?',
+        Gujarati: 'નમસ્તે. હું તમારી કેવી રીતે મદદ કરી શકું?',
+        Bengali: 'নমস্কার। আমি আপনাকে কীভাবে সাহায্য করতে পারি?',
+        Punjabi: 'ਸਤਿ ਸ਼੍ਰੀ ਅਕਾਲ। ਮੈਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?',
+      };
+      const greeting = greetings[detectedLanguage] ?? greetings['English'];
+
+      await session.say(greeting, { allowInterruptions: false });
+    }, 500); // Small 500ms delay gives the React frontend time to mount RPC handlers
 
     // Optional: Initial greeting matching agent.py
     // await agent.tts.say("Hello! I can help you fill out this form.");

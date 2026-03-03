@@ -108,6 +108,36 @@ function AgentClient({ appConfig, onPopupStateChange }: EmbedFixedAgentClientPro
     };
   }, [room, refreshConnectionDetails]);
 
+  // Sync language changes via polling since language state lives in page.tsx
+  // Polling only occurs while the popup is open
+  useEffect(() => {
+    if (!popupOpen || room.state !== 'connected') return;
+
+    let previousLang = window.__getReactLanguage?.() ?? 'English';
+
+    const interval = setInterval(() => {
+      const currentLang = window.__getReactLanguage?.() ?? 'English';
+      if (currentLang !== previousLang) {
+        previousLang = currentLang;
+
+        const participants = Array.from(room.remoteParticipants.values());
+        if (participants.length > 0) {
+          const identity = participants[0].identity;
+          room.localParticipant
+            ?.performRpc({
+              destinationIdentity: identity,
+              method: 'userLanguageChanged',
+              payload: JSON.stringify({ language: currentLang }),
+              responseTimeout: 4000,
+            })
+            .catch((err) => console.warn('Failed to notify agent of language change:', err));
+        }
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [popupOpen, room]);
+
   useEffect(() => {
     if (!popupOpen) {
       return;

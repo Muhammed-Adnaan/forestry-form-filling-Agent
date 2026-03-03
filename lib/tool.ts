@@ -10,6 +10,46 @@ declare global {
   }
 }
 
+// ── Language helpers ────────────────────────────────────────────────────────
+
+// Mapping of short codes to full language names.
+// Expanding to support up to 10 languages in the future.
+export const LANGUAGE_MAP: Record<string, string> = {
+  en: 'English',
+  kn: 'Kannada',
+  hi: 'Hindi',
+  ta: 'Tamil',
+  te: 'Telugu',
+  ml: 'Malayalam',
+  mr: 'Marathi',
+  gu: 'Gujarati',
+  bn: 'Bengali',
+  pa: 'Punjabi',
+};
+
+/** Returns the full name of the currently selected language (e.g. 'English', 'Kannada'). */
+export const getLanguage = (): string => {
+  if (typeof window !== 'undefined' && window.__getReactLanguage) {
+    const code = window.__getReactLanguage();
+    return LANGUAGE_MAP[code] || code || 'English';
+  }
+  return 'English';
+};
+
+/** Sets the active language in the React app using the full mapped name (e.g. 'English', 'Kannada'). */
+export const setLanguage = (langName: string): void => {
+  if (typeof window !== 'undefined' && window.__setReactLanguage) {
+    const entry = Object.entries(LANGUAGE_MAP).find(
+      ([code, name]) =>
+        name.toLowerCase() === langName.toLowerCase() ||
+        code.toLowerCase() === langName.toLowerCase()
+    );
+    // Pass the full name string
+    const nameToSet = entry ? entry[1] : langName;
+    window.__setReactLanguage(nameToSet);
+  }
+};
+
 // Function to extract all current data from the form
 export const getFormDetails = (sectionName?: string): Record<string, unknown> | null => {
   if (typeof document === 'undefined') return null;
@@ -117,8 +157,8 @@ const resolveSelectValues = (data: Record<string, unknown>): Record<string, unkn
 export const fillFormDetails = (data: Record<string, unknown>): void => {
   if (!data) return;
 
-  if (data.language && typeof window !== 'undefined' && window.__setReactLanguage) {
-    window.__setReactLanguage(String(data.language).toLowerCase());
+  if (data.language) {
+    setLanguage(String(data.language));
     delete data.language;
   }
 
@@ -177,10 +217,9 @@ export const fillFormDetails = (data: Record<string, unknown>): void => {
       }
     });
   });
+  // Expose to window for easy console debugging or external script access
+  if (typeof window !== 'undefined') {
+    window.getFormDetails = getFormDetails;
+    window.fillFormDetails = fillFormDetails;
+  }
 };
-
-// Expose to window for easy console debugging or external script access
-if (typeof window !== 'undefined') {
-  window.getFormDetails = getFormDetails;
-  window.fillFormDetails = fillFormDetails;
-}
