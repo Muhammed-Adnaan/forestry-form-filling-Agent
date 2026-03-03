@@ -55,15 +55,26 @@ class FormAssistant(Agent):
             raise Exception("No browser participant connected.")
         return participants[0].identity
 
-    @function_tool(description="Reads the form state. Call this first.")
-    async def get_form_details(self) -> str:
-        logger.info("🔍 Checking form via RPC...")
+    @function_tool(
+        description="Reads the form state. You can optionally pass a section_name to get details for only a specific section (e.g. ApplicantDetails, LocationDetails, BoundaryDetails, LandExtent, OtherDetails, UploadSection, Declaration)."
+    )
+    async def get_form_details(
+        self,
+        section_name: Annotated[
+            str,
+            "Optional section name to filter by (e.g. ApplicantDetails, LocationDetails, BoundaryDetails, LandExtent, OtherDetails, UploadSection, Declaration)",
+        ] = "",
+    ) -> str:
+        logger.info(f"🔍 Checking form via RPC for section {section_name}...")
         try:
             identity = self._get_browser_identity()
+            payload_data = (
+                json.dumps({"sectionName": section_name}) if section_name else ""
+            )
             response = await self.ctx.room.local_participant.perform_rpc(
                 destination_identity=identity,
                 method="getFormDetails",
-                payload="",
+                payload=payload_data,
                 response_timeout=4.0,
             )
             return f"Form State: {response}"

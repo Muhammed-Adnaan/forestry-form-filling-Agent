@@ -6,7 +6,7 @@ const buttonClass =
 
 const Declaration = ({ formData, handleInputChange, handleSubmit }) => {
   return (
-    <div>
+    <div data-section="Declaration">
       <table cellPadding="2" cellSpacing="2" className="mt-5 w-full border-collapse text-[#333]">
         <tbody>
           <tr>

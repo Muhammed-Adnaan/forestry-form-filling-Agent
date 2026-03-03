@@ -1,0 +1,45 @@
+# Dependencies (installed inside the container)
+node_modules
+.pnp
+.pnp.*
+
+# Next.js build output (rebuilt inside container)
+.next
+out
+build
+
+# Env files – inject at runtime, never bake into image
+.env
+.env.local
+.env*.local
+
+# Git / editor
+.git
+.gitignore
+.github
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker files themselves (no need to copy)
+Dockerfile
+.dockerignore
+
+# Lock file duplicates
+pnpm-lock.yaml.*
+
+# Test / dev scripts
+test_stt.py
+taskfile.yaml
+
+# IDE / prettier
+.vscode
+.prettierignore
+.eslintrc.json
+eslint.config.mjs
+renovate.json

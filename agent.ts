@@ -8,9 +8,9 @@ import path from 'node:path';
 import url from 'node:url';
 import { z } from 'zod';
 import { type JobContext, WorkerOptions, cli, defineAgent, llm, voice } from '@livekit/agents';
-import * as deepgram from '@livekit/agents-plugin-deepgram';
-import * as google from '@livekit/agents-plugin-google';
-import * as livekit from '@livekit/agents-plugin-livekit';
+// import * as deepgram from '@livekit/agents-plugin-deepgram';
+// import * as google from '@livekit/agents-plugin-google';
+// import * as livekit from '@livekit/agents-plugin-livekit';
 import * as openai from '@livekit/agents-plugin-openai';
 import * as silero from '@livekit/agents-plugin-silero';
 // import * as LivekitNC from '@livekit/noise-cancellation-node';
@@ -28,16 +28,25 @@ function makeFormTools(ctx: JobContext) {
   };
 
   const getFormDetails = llm.tool({
-    description: 'Reads the form state. Call this first.',
-    parameters: z.object({}), // Standard Pipeline handles empty objects fine!
-    execute: async () => {
+    description:
+      'Reads the form state. You can optionally pass a section_name to only get the details for a specific section (e.g. ApplicantDetails, LocationDetails, BoundaryDetails, LandExtent, OtherDetails, UploadSection, Declaration).',
+    parameters: z.object({
+      section_name: z
+        .string()
+        .optional()
+        .describe(
+          'The name of the section to read from. Examples: ApplicantDetails, LocationDetails, BoundaryDetails, LandExtent, OtherDetails, UploadSection, Declaration'
+        ),
+    }),
+    execute: async ({ section_name }) => {
       console.log('� Checking form via RPC...');
       try {
         const identity = getBrowserIdentity();
+        const payloadStr = section_name ? JSON.stringify({ sectionName: section_name }) : '';
         const response = await ctx.room.localParticipant?.performRpc({
           destinationIdentity: identity,
           method: 'getFormDetails',
-          payload: '',
+          payload: payloadStr,
           responseTimeout: 4000,
         });
         return `Form State: ${response}`;
@@ -82,8 +91,8 @@ class FormAssistant extends voice.Agent {
     super({
       // INSTRUCTIONS
       instructions: `You are a helpful voice assistant.
-                1. First, check the form state using 'get_form_details'.
-                2. Greet the user and ask for missing details.
+                1. First, check the form state using 'get_form_details' in this there is a component called "Declaration" in this we have language continue to responde in this language.
+                2. ask for missing details.
                 3. Use 'fill_form_fields' to update the form.
                 4. keep it short and conversational
                 5. just ask one - two  question at a time`,

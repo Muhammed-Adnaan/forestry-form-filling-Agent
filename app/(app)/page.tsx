@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import AgentClient from '@/components/embed-popup/agent-client';
 import ApplicantDetails from '@/components/form/ApplicantDetails';
 import BoundaryDetails from '@/components/form/BoundaryDetails';
+import DebugPanel from '@/components/form/DebugPanel';
 import Declaration from '@/components/form/Declaration';
 import FormHeader from '@/components/form/FormHeader';
 import LandExtent from '@/components/form/LandExtent';
@@ -208,7 +209,7 @@ function App() {
           />
         </form>
 
-        {/* <DebugPanel /> */}
+        <DebugPanel />
       </div>
 
       {/* LiveKit Popup Agent embedded on top of everything */}

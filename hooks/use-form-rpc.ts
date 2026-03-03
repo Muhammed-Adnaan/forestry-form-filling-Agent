@@ -17,10 +17,19 @@ export function useFormRpc() {
     if (!room) return;
 
     // ── Handler: getFormDetails ──────────────────────────────────────────────
-    const handleGetFormDetails = async (_data: RpcInvocationData): Promise<string> => {
+    const handleGetFormDetails = async (data: RpcInvocationData): Promise<string> => {
       try {
-        const data = getFormDetails();
-        return JSON.stringify(data ?? {});
+        let parsedPayload: any = {};
+        if (data.payload) {
+          try {
+            parsedPayload = JSON.parse(data.payload);
+          } catch (e) {
+            // ignore JSON parse error if invalid
+          }
+        }
+
+        const detailsData = getFormDetails(parsedPayload.sectionName);
+        return JSON.stringify(detailsData ?? {});
       } catch (err) {
         console.error('[useFormRpc] getFormDetails error:', err);
         return JSON.stringify({ error: String(err) });

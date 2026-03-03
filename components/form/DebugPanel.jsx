@@ -5,11 +5,6 @@ const DebugPanel = () => {
   const [jsonInput, setJsonInput] = useState('');
   const [jsonOutput, setJsonOutput] = useState('');
 
-  const handleGetDetails = () => {
-    const data = getFormDetails();
-    setJsonOutput(JSON.stringify(data, null, 2));
-  };
-
   const handleFillDetails = () => {
     try {
       const data = JSON.parse(jsonInput);
@@ -76,13 +71,128 @@ const DebugPanel = () => {
             Test <code>getFormDetails()</code>
           </h4>
           <p>Click the button below to extract the current form state.</p>
-          <button
-            onClick={handleGetDetails}
-            className="btn-success"
-            style={{ backgroundColor: '#0026ffff', borderColor: '#ffffffff' }}
-          >
-            Get Current Form Data
-          </button>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => {
+                const data = getFormDetails();
+                setJsonOutput(JSON.stringify(data, null, 2));
+              }}
+              className="btn-success"
+              style={{
+                backgroundColor: '#0026ffff',
+                borderColor: '#ffffffff',
+                flex: 1,
+                minWidth: '120px',
+              }}
+            >
+              Get All Data
+            </button>
+            <button
+              onClick={() => {
+                const data = getFormDetails('ApplicantDetails');
+                setJsonOutput(JSON.stringify(data, null, 2));
+              }}
+              className="btn-success"
+              style={{
+                backgroundColor: '#4caf50',
+                borderColor: '#ffffffff',
+                flex: 1,
+                minWidth: '120px',
+              }}
+            >
+              Applicant
+            </button>
+            <button
+              onClick={() => {
+                const data = getFormDetails('LocationDetails');
+                setJsonOutput(JSON.stringify(data, null, 2));
+              }}
+              className="btn-success"
+              style={{
+                backgroundColor: '#2196f3',
+                borderColor: '#ffffffff',
+                flex: 1,
+                minWidth: '120px',
+              }}
+            >
+              Location
+            </button>
+            <button
+              onClick={() => {
+                const data = getFormDetails('BoundaryDetails');
+                setJsonOutput(JSON.stringify(data, null, 2));
+              }}
+              className="btn-success"
+              style={{
+                backgroundColor: '#9c27b0',
+                borderColor: '#ffffffff',
+                flex: 1,
+                minWidth: '120px',
+              }}
+            >
+              Boundary
+            </button>
+            <button
+              onClick={() => {
+                const data = getFormDetails('LandExtent');
+                setJsonOutput(JSON.stringify(data, null, 2));
+              }}
+              className="btn-success"
+              style={{
+                backgroundColor: '#ff5722',
+                borderColor: '#ffffffff',
+                flex: 1,
+                minWidth: '120px',
+              }}
+            >
+              Land Extent
+            </button>
+            <button
+              onClick={() => {
+                const data = getFormDetails('OtherDetails');
+                setJsonOutput(JSON.stringify(data, null, 2));
+              }}
+              className="btn-success"
+              style={{
+                backgroundColor: '#795548',
+                borderColor: '#ffffffff',
+                flex: 1,
+                minWidth: '120px',
+              }}
+            >
+              Other
+            </button>
+            <button
+              onClick={() => {
+                const data = getFormDetails('UploadSection');
+                setJsonOutput(JSON.stringify(data, null, 2));
+              }}
+              className="btn-success"
+              style={{
+                backgroundColor: '#607d8b',
+                borderColor: '#ffffffff',
+                flex: 1,
+                minWidth: '120px',
+              }}
+            >
+              Uploads
+            </button>
+            <button
+              onClick={() => {
+                const data = getFormDetails('Declaration');
+                setJsonOutput(JSON.stringify(data, null, 2));
+              }}
+              className="btn-success"
+              style={{
+                backgroundColor: '#e91e63',
+                borderColor: '#ffffffff',
+                flex: 1,
+                minWidth: '120px',
+              }}
+            >
+              Declaration
+            </button>
+          </div>
           <textarea
             value={jsonOutput}
             readOnly

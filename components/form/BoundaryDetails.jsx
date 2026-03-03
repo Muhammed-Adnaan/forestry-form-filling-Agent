@@ -11,7 +11,7 @@ const requiredStar = 'text-red-600 text-lg font-bold';
 
 const BoundaryDetails = ({ formData, handleInputChange }) => {
   return (
-    <div>
+    <div data-section="BoundaryDetails">
       <div className={sectionHeader}>
         <h2 className={sectionTitle}>ಪ್ರದೇಶದ ಗಡಿ ವಿವರಗಳು/Site boundary details (Chakbandi)</h2>
       </div>

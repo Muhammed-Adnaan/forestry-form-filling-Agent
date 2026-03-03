@@ -11,19 +11,21 @@ export async function GET(request: NextRequest) {
 
     const villages = await prisma.village.findMany({
       // 2. Only filter if a valid talukId is provided
-      where: talukId ? {
-        taluk_id: talukId,
-      } : undefined,
-      
+      where: talukId
+        ? {
+            taluk_id: talukId,
+          }
+        : undefined,
+
       // 3. Ensure unique names in the dropdown
       distinct: ['village_name'],
-      
+
       // 4. Select only the necessary fields for a smaller payload
       select: {
         village_id: true,
         village_name: true,
       },
-      
+
       // 5. Alphabetical sorting
       orderBy: {
         village_name: 'asc',
@@ -33,9 +35,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(villages);
   } catch (error) {
     console.error('Error fetching villages:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch villages' }, 
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch villages' }, { status: 500 });
   }
 }

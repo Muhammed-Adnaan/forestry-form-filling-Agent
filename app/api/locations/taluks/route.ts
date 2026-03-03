@@ -11,13 +11,15 @@ export async function GET(request: NextRequest) {
 
     const taluks = await prisma.taluk.findMany({
       // If districtId is NaN or undefined, it will skip the filter
-      where: districtId ? {
-        district_id: districtId
-      } : undefined, 
-      
+      where: districtId
+        ? {
+            district_id: districtId,
+          }
+        : undefined,
+
       distinct: ['taluk_name'],
       select: {
-        taluk_id: true, 
+        taluk_id: true,
         taluk_name: true,
       },
       orderBy: {
@@ -28,9 +30,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(taluks);
   } catch (error) {
     console.error('Error fetching taluks:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch taluks' }, 
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch taluks' }, { status: 500 });
   }
 }

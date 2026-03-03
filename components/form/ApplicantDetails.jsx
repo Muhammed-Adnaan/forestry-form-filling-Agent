@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Shared Tailwind class strings for reuse
 const sectionHeader = 'bg-[#3d3d3d] border-b-4 border-[#E18728] px-[10px] py-[6px] mb-0';
@@ -11,6 +11,42 @@ const tdLeft = 'p-[5px] align-top text-left';
 const requiredStar = 'text-red-600 text-lg font-bold';
 
 const ApplicantDetails = ({ formData, handleInputChange }) => {
+  const [districts, setDistricts] = useState([]);
+  const [taluks, setTaluks] = useState([]);
+
+  // Fetch Districts on mount
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        const res = await fetch('/api/locations/districts');
+        const data = await res.json();
+        setDistricts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch districts', error);
+        setDistricts([]);
+      }
+    };
+    fetchDistricts();
+  }, []);
+  useEffect(() => {
+    // Fetch Taluks when a district is selected
+    const fetchTaluks = async () => {
+      if (formData.applicantDistrict && formData.applicantDistrict !== '0') {
+        try {
+          const res = await fetch(`/api/locations/taluks?districtId=${formData.applicantDistrict}`);
+          const data = await res.json();
+          setTaluks(Array.isArray(data) ? data : []);
+        } catch (error) {
+          console.error('Failed to fetch taluks', error);
+          setTaluks([]);
+        }
+      } else {
+        setTaluks([]);
+      }
+    };
+    fetchTaluks();
+  }, [formData.applicantDistrict]);
+
   const validateMobile = (e) => {
     const pattern = /^\d{10}$/;
     if (!pattern.test(e.target.value) && e.target.value !== '') {
@@ -42,7 +78,7 @@ const ApplicantDetails = ({ formData, handleInputChange }) => {
   };
 
   return (
-    <div>
+    <div data-section="ApplicantDetails">
       <div className={sectionHeader}>
         <h2 className={sectionTitle}>ಅರ್ಜಿದಾರರ ವಿವರಗಳು/Applicant Details(Communication Address)</h2>
       </div>
@@ -109,12 +145,17 @@ const ApplicantDetails = ({ formData, handleInputChange }) => {
             <td className={tdLeft}>
               <select
                 name="applicantDistrict"
-                value={formData.applicantDistrict}
+                value={formData.applicantDistrict || '0'}
                 onChange={handleInputChange}
                 className={selectClass}
               >
                 <option value="0">&lt;--Select--&gt;</option>
-                <option value="hassan">Hassan</option>
+                {Array.isArray(districts) &&
+                  districts.map((d) => (
+                    <option key={d.district_id} value={d.district_id}>
+                      {d.district_name}
+                    </option>
+                  ))}
               </select>
               <b className={requiredStar}>*</b>
             </td>
@@ -128,12 +169,17 @@ const ApplicantDetails = ({ formData, handleInputChange }) => {
             <td className={tdLeft}>
               <select
                 name="applicantTaluk"
-                value={formData.applicantTaluk}
+                value={formData.applicantTaluk || '0'}
                 onChange={handleInputChange}
                 className={selectClass}
               >
                 <option value="0">&lt;--Select--&gt;</option>
-                <option value="hassan">Hassan</option>
+                {Array.isArray(taluks) &&
+                  taluks.map((t) => (
+                    <option key={t.taluk_id} value={t.taluk_id}>
+                      {t.taluk_name}
+                    </option>
+                  ))}
               </select>
               <b className={requiredStar}>*</b>
             </td>

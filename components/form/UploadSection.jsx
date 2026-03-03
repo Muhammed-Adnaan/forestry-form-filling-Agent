@@ -8,7 +8,7 @@ const fileInputClass =
 
 const UploadSection = ({ formData, handleInputChange }) => {
   return (
-    <div>
+    <div data-section="UploadSection">
       <div className={sectionHeader}>
         <h2 className={sectionTitle}>ಲಗತ್ತುಗಳು/Uploads(Only jpg Files &lt; 200 kb )</h2>
       </div>

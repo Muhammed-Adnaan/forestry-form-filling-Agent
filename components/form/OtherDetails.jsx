@@ -12,7 +12,7 @@ const requiredStar = 'text-red-600 text-lg font-bold';
 
 const OtherDetails = ({ formData, handleInputChange }) => {
   return (
-    <div>
+    <div data-section="OtherDetails">
       <div className={sectionHeader}>
         <h2 className={sectionTitle}>ಇತರೆ ವಿವರಗಳು/Other Details</h2>
       </div>

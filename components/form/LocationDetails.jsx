@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 const sectionHeader = 'bg-[#3d3d3d] border-b-4 border-[#E18728] px-[10px] py-[6px] mb-0';
 const sectionTitle = '!text-white text-[13px] m-0 p-0 font-normal';
 const labelClass = 'text-[13px] text-[#242424]';
-const selectClass = 'px-1 py-[3px] text-[#333] border border-[#ccc] rounded-[3px] bg-white w-5/8';
+const selectClass = 'px-1 py-[3px] text-[#333] border border-[#ccc] rounded-[3px] bg-white w-[90%]';
 const tdRight = 'p-[5px] align-top text-right';
 const tdLeft = 'p-[5px] align-top text-left';
 const requiredStar = 'text-red-600 text-lg font-bold';
@@ -11,6 +11,8 @@ const requiredStar = 'text-red-600 text-lg font-bold';
 const LocationDetails = ({ formData, handleInputChange }) => {
   const [districts, setDistricts] = useState([]);
   const [taluks, setTaluks] = useState([]);
+  const [hoblis, setHoblis] = useState([]);
+  const [hoblisLoading, setHoblisLoading] = useState(false);
   const [villages, setVillages] = useState([]);
 
   useEffect(() => {
@@ -48,6 +50,36 @@ const LocationDetails = ({ formData, handleInputChange }) => {
   }, [formData.district]);
 
   useEffect(() => {
+    // Fetch Hoblis via LLM when a taluk is selected
+    const fetchHoblis = async () => {
+      if (formData.taluk && formData.taluk !== '0') {
+        // Find the taluk name from the loaded taluks list
+        const selectedTaluk = taluks.find((t) => String(t.taluk_id) === String(formData.taluk));
+        const talukName = selectedTaluk?.taluk_name;
+        if (!talukName) return;
+
+        setHoblisLoading(true);
+        setHoblis([]);
+        try {
+          const res = await fetch(
+            `/api/locations/hobli?talukName=${encodeURIComponent(talukName)}`
+          );
+          const data = await res.json();
+          setHoblis(Array.isArray(data) ? data : []);
+        } catch (error) {
+          console.error('Failed to fetch hoblis', error);
+          setHoblis([]);
+        } finally {
+          setHoblisLoading(false);
+        }
+      } else {
+        setHoblis([]);
+      }
+    };
+    fetchHoblis();
+  }, [formData.taluk, taluks]);
+
+  useEffect(() => {
     // Fetch Villages when a taluk is selected (and area is rural)
     const fetchVillages = async () => {
       if (formData.areaType === 'rural_area' && formData.taluk && formData.taluk !== '0') {
@@ -67,7 +99,7 @@ const LocationDetails = ({ formData, handleInputChange }) => {
   }, [formData.taluk, formData.areaType]);
 
   return (
-    <div>
+    <div data-section="LocationDetails">
       <div className={sectionHeader}>
         <h2 className={sectionTitle}>
           ಮರ ಕಟಾವಣೆಗೆ ಕೋರಿರುವ ಸ್ಥಳದ ಕುರಿತು ವಿವರಗಳು/Details regarding location where felling is being
@@ -114,11 +146,12 @@ const LocationDetails = ({ formData, handleInputChange }) => {
                 className={selectClass}
               >
                 <option value="0">&lt;--Select--&gt;</option>
-                {Array.isArray(districts) && districts.map((d) => (
-                  <option key={d.district_id} value={d.district_id}>
-                    {d.district_name}
-                  </option>
-                ))}
+                {Array.isArray(districts) &&
+                  districts.map((d) => (
+                    <option key={d.district_id} value={d.district_id}>
+                      {d.district_name}
+                    </option>
+                  ))}
               </select>
               <b className={requiredStar}>*</b>
             </td>
@@ -135,11 +168,12 @@ const LocationDetails = ({ formData, handleInputChange }) => {
                 className={selectClass}
               >
                 <option value="0">&lt;--Select--&gt;</option>
-                {Array.isArray(taluks) && taluks.map((t) => (
-                  <option key={t.taluk_id} value={t.taluk_id}>
-                    {t.taluk_name}
-                  </option>
-                ))}
+                {Array.isArray(taluks) &&
+                  taluks.map((t) => (
+                    <option key={t.taluk_id} value={t.taluk_id}>
+                      {t.taluk_name}
+                    </option>
+                  ))}
               </select>
               <b className={requiredStar}>*</b>
             </td>
@@ -162,9 +196,13 @@ const LocationDetails = ({ formData, handleInputChange }) => {
                     className={selectClass}
                   >
                     <option value="0">&lt;--Select--&gt;</option>
-                    <option value="kasaba">Kasaba</option>
-                    <option value="dudda">Dudda</option>
-                    {/* TODO: Add logic for hobli if it exists in the database, currently missing from schema */}
+                    {hoblisLoading && <option disabled>Loading hoblis...</option>}
+                    {!hoblisLoading &&
+                      hoblis.map((h) => (
+                        <option key={h.hobli_id} value={h.hobli_id}>
+                          {h.hobli_name}
+                        </option>
+                      ))}
                   </select>
                   <b className={requiredStar}>*</b>
                 </td>
@@ -181,11 +219,12 @@ const LocationDetails = ({ formData, handleInputChange }) => {
                     className={selectClass}
                   >
                     <option value="0">&lt;--Select--&gt;</option>
-                    {Array.isArray(villages) && villages.map((v) => (
-                      <option key={v.village_id} value={v.village_id}>
-                        {v.village_name}
-                      </option>
-                    ))}
+                    {Array.isArray(villages) &&
+                      villages.map((v) => (
+                        <option key={v.village_id} value={v.village_id}>
+                          {v.village_name}
+                        </option>
+                      ))}
                   </select>
                   <b className={requiredStar}>*</b>
                 </td>

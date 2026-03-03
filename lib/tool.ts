@@ -11,25 +11,29 @@ declare global {
 }
 
 // Function to extract all current data from the form
-export const getFormDetails = (): Record<string, unknown> | null => {
+export const getFormDetails = (sectionName?: string): Record<string, unknown> | null => {
   if (typeof document === 'undefined') return null;
 
-  const form = document.querySelector('form');
-  if (!form) {
-    // Fallback to React state if form not found in DOM
-    if (typeof window !== 'undefined' && window.__getReactFormData) {
-      return window.__getReactFormData();
+  let root: Element | Document = document;
+
+  // If sectionName is provided, try to find the specific container
+  if (sectionName) {
+    const section = document.querySelector(`[data-section="${sectionName}"]`);
+    if (section) {
+      root = section;
+    } else {
+      console.warn(`Section "${sectionName}" not found in DOM.`);
+      return null;
     }
-    return null;
   }
 
   const data: Record<string, unknown> = {};
-  const elements = form.elements as HTMLCollectionOf<
-    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-  >;
 
-  for (let i = 0; i < elements.length; i++) {
-    const item = elements[i];
+  // Find all input-like elements within the root (either document or specific section)
+  const elements = root.querySelectorAll('input, select, textarea');
+
+  elements.forEach((el) => {
+    const item = el as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
     if (item.name) {
       if (item.type === 'radio' || item.type === 'checkbox') {
         if ((item as HTMLInputElement).checked) {
@@ -59,7 +63,7 @@ export const getFormDetails = (): Record<string, unknown> | null => {
         }
       }
     }
-  }
+  });
 
   if (typeof window !== 'undefined' && window.__getReactLanguage) {
     data.language = window.__getReactLanguage();
@@ -68,18 +72,62 @@ export const getFormDetails = (): Record<string, unknown> | null => {
   return data;
 };
 
+// Resolves labels to option values for select fields.
+// If the agent passes "Hassan" instead of "17898", this function will find the correct key.
+const resolveSelectValues = (data: Record<string, unknown>): Record<string, unknown> => {
+  if (typeof document === 'undefined') return data;
+
+  const resolved = { ...data };
+
+  Object.keys(resolved).forEach((key) => {
+    // Skip _options keys, they are not field values
+    if (key.endsWith('_options')) return;
+
+    const value = String(resolved[key] ?? '');
+    if (!value || value === '0') return;
+
+    const selectEl = document.querySelector<HTMLSelectElement>(`select[name="${key}"]`);
+    if (!selectEl) return;
+
+    // Check if value already matches an option's value attribute - if so, no resolution needed
+    const exactMatch = Array.from(selectEl.options).some((opt) => opt.value === value);
+    if (exactMatch) return;
+
+    // Try to find a match by label text (case-insensitive)
+    const labelMatch = Array.from(selectEl.options).find(
+      (opt) => opt.text.trim().toLowerCase() === value.toLowerCase()
+    );
+
+    if (labelMatch) {
+      console.log(
+        `[fillFormDetails] Resolved "${key}": "${value}" → "${labelMatch.value}" (${labelMatch.text.trim()})`
+      );
+      resolved[key] = labelMatch.value;
+    } else {
+      console.warn(
+        `[fillFormDetails] Could not resolve value "${value}" for field "${key}". No matching option found.`
+      );
+    }
+  });
+
+  return resolved;
+};
+
 // Function to programmatically fill the form from an object
 export const fillFormDetails = (data: Record<string, unknown>): void => {
   if (!data) return;
 
   if (data.language && typeof window !== 'undefined' && window.__setReactLanguage) {
     window.__setReactLanguage(String(data.language).toLowerCase());
-    delete data.language; // We might not need to set it on the form data itself
+    delete data.language;
   }
+
+  // Resolve any label strings to their corresponding option values for selects
+  const resolvedData = resolveSelectValues(data);
 
   // The most robust way to fill a React form is to update its state directly.
   if (typeof window !== 'undefined' && window.__setReactFormData) {
-    window.__setReactFormData(data);
+    window.__setReactFormData(resolvedData);
     return;
   }
 
