@@ -98,10 +98,10 @@ npx tsx agent.ts dev
 ```
 
 > [!NOTE]
-> The agents share the same `.env.local` credentials as your Next.js frontend. They will automatically connect to your LiveKit Cloud Sandbox project and start listening for inbound user connections.
+> The agents share the same `.env` credentials as your Next.js frontend. They will automatically connect to your LiveKit Cloud Sandbox project and start listening for inbound user connections.
 
 > [!NOTE]
-> If you need to modify the LiveKit project credentials used, you can edit `.env.local` (copy from `.env.example` if you don't have one) to suit your needs.
+> If you need to modify the LiveKit project credentials used, you can edit `.env` (copy from `.env.example` if you don't have one) to suit your needs.
 
 ## Configuration
 
@@ -122,7 +122,7 @@ You can update these values in [`app-config.ts`](./app-config.ts) to customize b
 
 #### Environment Variables
 
-You'll also need to configure your LiveKit credentials in `.env.local` (copy `.env.example` if you don't have one):
+You'll also need to configure your LiveKit credentials in `.env` (copy `.env.example` if you don't have one):
 
 ```env
 LIVEKIT_API_KEY=your_livekit_api_key

@@ -103,7 +103,7 @@ USER nextjs
 EXPOSE 3000
 
 # Runtime environment variables – pass real values with
-#   docker run --env-file .env.local  OR  -e LIVEKIT_API_KEY=...
+#   docker run --env-file .env  OR  -e LIVEKIT_API_KEY=...
 ENV LIVEKIT_API_KEY=""
 ENV LIVEKIT_API_SECRET=""
 ENV LIVEKIT_URL=""

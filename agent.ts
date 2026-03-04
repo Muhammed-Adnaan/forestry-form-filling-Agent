@@ -17,7 +17,7 @@ import * as silero from '@livekit/agents-plugin-silero';
 // import * as LivekitNC from '@livekit/noise-cancellation-node';
 import { BackgroundVoiceCancellation } from '@livekit/noise-cancellation-node';
 
-dotenv.config({ path: ['.env.local', '.env'] });
+dotenv.config({ path: ['.env'] });
 
 // ─── 1. TOOL DEFINITIONS (Standard) ───────────────────────────────────────────
 

@@ -10,7 +10,7 @@ const tdRight = 'p-[5px] align-top text-right';
 const tdLeft = 'p-[5px] align-top text-left';
 const requiredStar = 'text-red-600 text-lg font-bold';
 
-const ApplicantDetails = ({ formData, handleInputChange }) => {
+const ApplicantDetails = ({ formData, handleInputChange, showAlert }) => {
   const [districts, setDistricts] = useState([]);
   const [taluks, setTaluks] = useState([]);
 
@@ -50,7 +50,9 @@ const ApplicantDetails = ({ formData, handleInputChange }) => {
   const validateMobile = (e) => {
     const pattern = /^\d{10}$/;
     if (!pattern.test(e.target.value) && e.target.value !== '') {
-      alert('Phone number should be in 0123456789 format');
+      showAlert
+        ? showAlert('Phone number should be in 10 digits format', 'alert')
+        : alert('Phone number should be in 10 digits format');
       e.target.focus();
     } else {
       handleInputChange(e);
@@ -60,7 +62,9 @@ const ApplicantDetails = ({ formData, handleInputChange }) => {
   const validateEmail = (e) => {
     const filter = /^([a-z A-Z 0-9 _.-])+@(([a-z A-Z 0-9-])+.)+([a-z A-z 0-9]{3,3})+$/;
     if (!filter.test(e.target.value) && e.target.value !== '') {
-      alert('Email is in www.gmail.com format (e.g., user@domain.com)');
+      showAlert
+        ? showAlert('Email is in format (e.g., user@domain.com)', 'alert')
+        : alert('Email is in format (e.g., user@domain.com)');
       e.target.focus();
     } else {
       handleInputChange(e);
@@ -70,7 +74,9 @@ const ApplicantDetails = ({ formData, handleInputChange }) => {
   const validatePincode = (e) => {
     const pat1 = /^\d{6}$/;
     if (!pat1.test(e.target.value) && e.target.value !== '') {
-      alert('Pin code should be 6 digits');
+      showAlert
+        ? showAlert('Pin code should be 6 digits', 'alert')
+        : alert('Pin code should be 6 digits');
       e.target.focus();
     } else {
       handleInputChange(e);

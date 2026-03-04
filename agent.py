@@ -25,7 +25,7 @@ from livekit.plugins import (
 )
 
 
-load_dotenv(".env.local")
+load_dotenv(".env")
 
 logger = logging.getLogger("google-form-agent")
 logger.setLevel(logging.INFO)

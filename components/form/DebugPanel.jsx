@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { fillFormDetails, getFormDetails } from '@/lib/tool';
 
-const DebugPanel = () => {
+const DebugPanel = ({ showAlert }) => {
   const [jsonInput, setJsonInput] = useState('');
   const [jsonOutput, setJsonOutput] = useState('');
 
@@ -10,8 +10,11 @@ const DebugPanel = () => {
       const data = JSON.parse(jsonInput);
       fillFormDetails(data);
       console.log('Form filled successfully! Please check the fields.');
+      if (showAlert) showAlert('Form filled successfully!', 'success');
     } catch (e) {
-      alert('Invalid JSON format in the input area.');
+      showAlert
+        ? showAlert('Invalid JSON format in the input area.', 'alert')
+        : alert('Invalid JSON format in the input area.');
       console.error(e);
     }
   };

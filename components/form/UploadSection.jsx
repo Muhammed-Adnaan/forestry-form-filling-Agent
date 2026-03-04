@@ -26,7 +26,7 @@ const UploadSection = ({ formData, handleInputChange }) => {
                 type="file"
                 name="fupLocation"
                 onChange={handleInputChange}
-                accept=".jpg,.jpeg,.png,.gif"
+                accept=".jpg,.jpeg,image/jpeg"
                 className={fileInputClass}
               />
             </td>
@@ -49,7 +49,7 @@ const UploadSection = ({ formData, handleInputChange }) => {
                   type="file"
                   name="fupTreeRights"
                   onChange={handleInputChange}
-                  accept=".jpg,.jpeg,.png,.gif"
+                  accept=".jpg,.jpeg,image/jpeg"
                   className={fileInputClass}
                 />
               </td>
@@ -71,7 +71,7 @@ const UploadSection = ({ formData, handleInputChange }) => {
                 type="file"
                 name="fupKhataExtract"
                 onChange={handleInputChange}
-                accept=".jpg,.jpeg,.png,.gif"
+                accept=".jpg,.jpeg,image/jpeg"
                 className={fileInputClass}
               />
             </td>
@@ -93,7 +93,7 @@ const UploadSection = ({ formData, handleInputChange }) => {
                 type="file"
                 name="fupRightCertificate"
                 onChange={handleInputChange}
-                accept=".jpg,.jpeg,.png,.gif"
+                accept=".jpg,.jpeg,image/jpeg"
                 className={fileInputClass}
               />
             </td>
@@ -111,7 +111,7 @@ const UploadSection = ({ formData, handleInputChange }) => {
                   type="file"
                   name="fupLicenseCertificate"
                   onChange={handleInputChange}
-                  accept=".jpg,.jpeg,.png,.gif"
+                  accept=".jpg,.jpeg,image/jpeg"
                   className={fileInputClass}
                 />
               </td>
@@ -138,7 +138,7 @@ const UploadSection = ({ formData, handleInputChange }) => {
                     type="file"
                     name="fupGPA"
                     onChange={handleInputChange}
-                    accept=".jpg,.jpeg,.png,.gif"
+                    accept=".jpg,.jpeg,image/jpeg"
                     className={fileInputClass}
                   />
                 </td>

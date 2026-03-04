@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-// import DebugPanel from '@/components/form/DebugPanel';
-
+import { submitForm } from '@/app/actions/submitForm';
 import AgentClient from '@/components/embed-popup/agent-client';
 import ApplicantDetails from '@/components/form/ApplicantDetails';
 import BoundaryDetails from '@/components/form/BoundaryDetails';
@@ -15,11 +14,32 @@ import OtherDetails from '@/components/form/OtherDetails';
 import SubmittedTo from '@/components/form/SubmittedTo';
 import TopNavbar from '@/components/form/TopNavbar';
 import UploadSection from '@/components/form/UploadSection';
+// import DebugPanel from '@/components/form/DebugPanel';
+
+import { AlertPopup } from '@/components/ui/AlertPopup';
 import '@/styles/App.css';
 
 function App() {
   const [isAgentOpen, setIsAgentOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [language, setLanguage] = useState('English');
+  const [alertInfo, setAlertInfo] = useState<{
+    isOpen: boolean;
+    message: string;
+    type: 'success' | 'failure' | 'alert';
+  }>({
+    isOpen: false,
+    message: '',
+    type: 'alert',
+  });
+
+  const showAlert = (message: string, type: 'success' | 'failure' | 'alert') => {
+    setAlertInfo({ isOpen: true, message, type });
+  };
+
+  const hideAlert = () => {
+    setAlertInfo((prev) => ({ ...prev, isOpen: false }));
+  };
   const [formData, setFormData] = useState({
     areaType: '0',
     district: '0',
@@ -81,9 +101,21 @@ function App() {
     const { name, value, type } = e.target;
     if (type === 'file') {
       const files = (e.target as HTMLInputElement).files;
+      const file = files ? files[0] : null;
+      if (file) {
+        const allowedMime = ['image/jpeg', 'image/jpg'];
+        if (!allowedMime.includes(file.type)) {
+          showAlert(
+            `Only JPG/JPEG files are accepted. You selected: ${file.type || file.name}`,
+            'alert'
+          );
+          (e.target as HTMLInputElement).value = ''; // reset the input
+          return;
+        }
+      }
       setFormData({
         ...formData,
-        [name]: files ? files[0] : null,
+        [name]: file ?? null,
       });
     } else {
       setFormData({
@@ -93,7 +125,7 @@ function App() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Replicate FieldValidation () logic from original form
     let msg = '';
@@ -146,12 +178,33 @@ function App() {
     }
 
     if (!isValid) {
-      alert(msg + ' is mandatory.');
+      showAlert(msg + ' is mandatory.', 'alert');
       return;
     }
 
-    alert('Form submitted successfully!');
-    console.log('Submitted Data:', formData);
+    try {
+      setIsSubmitting(true);
+      // Build FormData so File objects are passed directly to the server action
+      const fd = new FormData();
+      Object.entries(formData).forEach(([k, v]) => {
+        if ((v as unknown) instanceof File) {
+          fd.append(k, v as unknown as File);
+        } else if (v != null) {
+          fd.append(k, String(v));
+        } else {
+          fd.append(k, '');
+        }
+      });
+      const result = await submitForm(fd);
+      showAlert(`Form submitted successfully! Reference ID: ${result.id}`, 'success');
+      console.log('Submitted to PostgreSQL, ID:', result.id);
+    } catch (err) {
+      console.error('Submission error:', err);
+      const msg = err instanceof Error ? err.message : 'Failed to submit form. Please try again.';
+      showAlert(msg, 'failure');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const agentConfig = {
@@ -172,6 +225,7 @@ function App() {
 
   return (
     <div className="App">
+      <AlertPopup {...alertInfo} onClose={hideAlert} duration={5000} />
       <TopNavbar language={language} setLanguage={setLanguage} />
       <div
         className="container"
@@ -187,14 +241,22 @@ function App() {
       >
         <FormHeader />
         <br />
-        <form className="form" onSubmit={handleSubmit}>
+        <form className="form" onSubmit={handleSubmit} aria-busy={isSubmitting}>
           <LocationDetails formData={formData} handleInputChange={handleInputChange} />
           <br />
-          <LandExtent formData={formData} handleInputChange={handleInputChange} />
+          <LandExtent
+            formData={formData}
+            handleInputChange={handleInputChange}
+            showAlert={showAlert}
+          />
           <br />
           <SubmittedTo />
           <br />
-          <ApplicantDetails formData={formData} handleInputChange={handleInputChange} />
+          <ApplicantDetails
+            formData={formData}
+            handleInputChange={handleInputChange}
+            showAlert={showAlert}
+          />
           <br />
           <BoundaryDetails formData={formData} handleInputChange={handleInputChange} />
           <br />
@@ -209,7 +271,7 @@ function App() {
           />
         </form>
 
-        <DebugPanel />
+        <DebugPanel showAlert={showAlert} />
       </div>
 
       {/* LiveKit Popup Agent embedded on top of everything */}

@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/postgres"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model FormSubmission {
+  id                    Int      @id @default(autoincrement())
+  createdAt             DateTime @default(now())
+
+  areaType              String?
+  district              String?
+  taluk                 String?
+  hobli                 String?
+  village               String?
+  urbanArea             String?
+  surveyNo              String?
+  khataNo               String?
+  acres                 String?
+  guntas                String?
+  anna                  String?
+  
+  applicantType         String?
+  applicantName         String?
+  address               String?
+  applicantDistrict     String?
+  applicantTaluk        String?
+  pincode               String?
+  mobile                String?
+  email                 String?
+  aadhaarNo             String?
+
+  landOwnerName         String?
+  landOwnerAddress      String?
+  landOwnerDistrict     String?
+  landOwnerTaluk        String?
+  east                  String?
+  west                  String?
+  north                 String?
+  south                 String?
+
+  purpose               String?
+  surveyBoundary        String?
+  govtSite              String?
+  govtSiteDetails       String?
+  consent               String?
+  license               String?
+
+  // File binary blobs (bytea)
+  fupLocation           Bytes?
+  fupTreeRights         Bytes?
+  fupKhataExtract       Bytes?
+  fupRightCertificate   Bytes?
+  fupLicenseCertificate Bytes?
+  fupGPA                Bytes?
+
+  declaration           String?
+}

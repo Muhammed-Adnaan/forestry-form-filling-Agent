@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from livekit.plugins import deepgram
 import os
 
-load_dotenv(".env.local")
+load_dotenv(".env")
 
 
 async def main():

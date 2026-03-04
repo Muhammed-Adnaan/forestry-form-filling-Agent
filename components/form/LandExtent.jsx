@@ -6,11 +6,13 @@ const tdRight = 'p-[5px] align-top text-right';
 const tdLeft = 'p-[5px] align-top text-left';
 const requiredStar = 'text-red-600 text-lg font-bold';
 
-const LandExtent = ({ formData, handleInputChange }) => {
+const LandExtent = ({ formData, handleInputChange, showAlert }) => {
   const handleGuntasChange = (e) => {
     let val = parseInt(e.target.value, 10);
     if (val < 0 || val > 39) {
-      alert('Guntas must be between 1 and 39');
+      showAlert
+        ? showAlert('Guntas must be between 1 and 39', 'alert')
+        : alert('Guntas must be between 1 and 39');
       e.target.value = '';
     } else {
       handleInputChange(e);
@@ -20,7 +22,9 @@ const LandExtent = ({ formData, handleInputChange }) => {
   const handleAnnaChange = (e) => {
     let val = parseInt(e.target.value, 10);
     if (val < 0 || val > 15) {
-      alert('Anna must be between 1 and 15');
+      showAlert
+        ? showAlert('Anna must be between 1 and 15', 'alert')
+        : alert('Anna must be between 1 and 15');
       e.target.value = '';
     } else {
       handleInputChange(e);

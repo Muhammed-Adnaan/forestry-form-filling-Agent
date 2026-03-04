@@ -1,8 +1,6 @@
 'use client';
 
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-// import DebugPanel from '@/components/form/DebugPanel';
-
 import AgentClient from '@/components/embed-popup/agent-client';
 import ApplicantDetails from '@/components/form/ApplicantDetails';
 import BoundaryDetails from '@/components/form/BoundaryDetails';
@@ -14,11 +12,31 @@ import OtherDetails from '@/components/form/OtherDetails';
 import SubmittedTo from '@/components/form/SubmittedTo';
 import TopNavbar from '@/components/form/TopNavbar';
 import UploadSection from '@/components/form/UploadSection';
+// import DebugPanel from '@/components/form/DebugPanel';
+
+import { AlertPopup } from '@/components/ui/AlertPopup';
 import '@/styles/App.css';
 
 function App() {
   const [isAgentOpen, setIsAgentOpen] = useState(false);
   const [language, setLanguage] = useState('english');
+  const [alertInfo, setAlertInfo] = useState<{
+    isOpen: boolean;
+    message: string;
+    type: 'success' | 'failure' | 'alert';
+  }>({
+    isOpen: false,
+    message: '',
+    type: 'alert',
+  });
+
+  const showAlert = (message: string, type: 'success' | 'failure' | 'alert') => {
+    setAlertInfo({ isOpen: true, message, type });
+  };
+
+  const hideAlert = () => {
+    setAlertInfo((prev) => ({ ...prev, isOpen: false }));
+  };
   const [formData, setFormData] = useState({
     areaType: '0',
     district: '0',
@@ -144,11 +162,11 @@ function App() {
     }
 
     if (!isValid) {
-      alert(msg + ' is mandatory.');
+      showAlert(msg + ' is mandatory.', 'alert');
       return;
     }
 
-    alert('Form submitted successfully!');
+    showAlert('Form submitted successfully!', 'success');
     console.log('Submitted Data:', formData);
   };
 
@@ -170,6 +188,7 @@ function App() {
 
   return (
     <div className="App">
+      <AlertPopup {...alertInfo} onClose={hideAlert} duration={5000} />
       <TopNavbar language={language} setLanguage={setLanguage} />
       <div
         className="container"
@@ -188,11 +207,19 @@ function App() {
         <form className="form" onSubmit={handleSubmit}>
           <LocationDetails formData={formData} handleInputChange={handleInputChange} />
           <br />
-          <LandExtent formData={formData} handleInputChange={handleInputChange} />
+          <LandExtent
+            formData={formData}
+            handleInputChange={handleInputChange}
+            showAlert={showAlert}
+          />
           <br />
           <SubmittedTo />
           <br />
-          <ApplicantDetails formData={formData} handleInputChange={handleInputChange} />
+          <ApplicantDetails
+            formData={formData}
+            handleInputChange={handleInputChange}
+            showAlert={showAlert}
+          />
           <br />
           <BoundaryDetails formData={formData} handleInputChange={handleInputChange} />
           <br />
